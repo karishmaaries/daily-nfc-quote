@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>a little something for today</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,500;1,600&family=Jost:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --glass: rgba(255, 250, 244, 0.55);
+    --glass-border: rgba(255, 224, 168, 0.55);
+    --ink: #2b241f;
+    --ink-soft: #6b5f52;
+    --gold: #cba064;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { height: 100%; margin: 0; }
+
+  body {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Jost', sans-serif;
+    overflow: hidden;
+    padding: 24px;
+  }
+
+  .bg-layer {
+    position: fixed;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    opacity: 0;
+    transition: opacity 1.4s ease;
+    z-index: 0;
+  }
+  .bg-layer.active { opacity: 1; }
+
+  .bg-scrim {
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(20,15,10,0.18), rgba(20,15,10,0.38));
+    z-index: 1;
+  }
+
+  .card {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 440px;
+    background: var(--glass);
+    border: 1px solid var(--glass-border);
+    border-radius: 6px;
+    backdrop-filter: blur(22px) saturate(140%);
+    -webkit-backdrop-filter: blur(22px) saturate(140%);
+    box-shadow: 0 30px 60px -20px rgba(0,0,0,0.45);
+    padding: 46px 40px 38px 40px;
+    text-align: center;
+    transition: opacity 0.5s ease;
+  }
+
+  .card.swap { opacity: 0; }
+
+  .eyebrow {
+    font-family: 'Jost', sans-serif;
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 26px;
+  }
+
+  .eyebrow::before, .eyebrow::after {
+    content: "";
+    height: 1px;
+    width: 22px;
+    background: var(--gold);
+    opacity: 0.7;
+  }
+
+  .quote {
+    font-family: 'Cormorant Garamond', serif;
+    font-style: italic;
+    font-weight: 500;
+    font-size: clamp(24px, 5vw, 30px);
+    line-height: 1.5;
+    color: var(--ink);
+    min-height: 110px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .again {
+    margin-top: 24px;
+    background: none;
+    border: none;
+    border-bottom: 1px solid var(--gold);
+    font-family: 'Jost', sans-serif;
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    padding: 4px 2px 6px 2px;
+    cursor: pointer;
+    transition: color 0.2s ease, border-color 0.2s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .again:hover, .again:focus-visible { color: var(--ink); border-color: var(--ink); }
+  .again:focus-visible { outline: none; }
+
+  .credit {
+    position: fixed;
+    bottom: 14px;
+    right: 16px;
+    z-index: 2;
+    font-family: 'Jost', sans-serif;
+    font-size: 10px;
+    letter-spacing: 0.04em;
+    color: rgba(255,255,255,0.75);
+    text-shadow: 0 1px 3px rgba(0,0,0,0.4);
+    transition: opacity 0.6s ease;
+  }
+
+  @media (max-width: 480px) {
+    .card { padding: 38px 26px 30px 26px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-layer" id="bg0"></div>
+<div class="bg-layer" id="bg1"></div>
+<div class="bg-scrim"></div>
+
+<div class="card" id="card">
+  <div class="eyebrow">A little something for today</div>
+  <div class="quote" id="quote"></div>
+  <button class="again" id="again">Reveal another</button>
+</div>
+
+<div class="credit" id="credit"></div>
+
+<script>
+  const scenes = [
+    {
+      url: "https://images.unsplash.com/photo-1746822132410-0aa489a964f2?fm=jpg&q=80&w=1920&auto=format&fit=crop",
+      credit: "Helen Van"
+    },
+    {
+      url: "https://images.unsplash.com/photo-1485139624563-98d1b12b0b38?fm=jpg&q=80&w=1920&auto=format&fit=crop",
+      credit: "Aaron Burden"
+    },
+    {
+      url: "https://images.unsplash.com/photo-1705052578171-b3299c338cb8?fm=jpg&q=80&w=1920&auto=format&fit=crop",
+      credit: "Lukasz Szmigiel"
+    },
+    {
+      url: "https://images.unsplash.com/photo-1499002238440-d264edd596ec?fm=jpg&q=80&w=1920&auto=format&fit=crop",
+      credit: "Léonard Cotte"
+    }
+  ];
+
+  const quotes = [
+    "This too shall pass, and so will this stillness.",
+    "Bloom where you are, even in imperfect soil.",
+    "Slow mornings are still mornings well spent.",
+    "The quiet days count too.",
+    "Let today be gentle, even if it isn't easy.",
+    "You are allowed to move at your own pace.",
+    "Some days are for blooming, some are for rooting.",
+    "Softness is not the same as weakness.",
+    "There is grace in simply beginning again.",
+    "The garden does not rush, and still it flowers.",
+    "Even quiet growth is still growth.",
+    "Today asks only that you show up as you are.",
+    "Let the good, small things be enough for now.",
+    "A calm heart can carry a great deal.",
+    "Beauty rarely announces itself. Look closer today."
+  ];
+
+  // preload
+  scenes.forEach(s => { const img = new Image(); img.src = s.url; });
+
+  let lastScene = -1, lastQuote = -1, activeLayer = 0;
+  const layers = [document.getElementById('bg0'), document.getElementById('bg1')];
+  const quoteEl = document.getElementById('quote');
+  const cardEl = document.getElementById('card');
+  const creditEl = document.getElementById('credit');
+
+  function pick(arr, last) {
+    let i;
+    do { i = Math.floor(Math.random() * arr.length); }
+    while (arr.length > 1 && i === last);
+    return i;
+  }
+
+  function setScene(animate) {
+    const si = pick(scenes, lastScene); lastScene = si;
+    const qi = pick(quotes, lastQuote); lastQuote = qi;
+
+    const nextLayer = layers[1 - activeLayer];
+    nextLayer.style.backgroundImage = `url('${scenes[si].url}')`;
+    nextLayer.classList.add('active');
+    layers[activeLayer].classList.remove('active');
+    activeLayer = 1 - activeLayer;
+
+    creditEl.style.opacity = 0;
+    setTimeout(() => {
+      creditEl.textContent = `Photo: ${scenes[si].credit} on Unsplash`;
+      creditEl.style.opacity = 1;
+    }, animate ? 300 : 0);
+
+    if (!animate) {
+      quoteEl.textContent = quotes[qi];
+      return;
+    }
+    cardEl.classList.add('swap');
+    setTimeout(() => {
+      quoteEl.textContent = quotes[qi];
+      cardEl.classList.remove('swap');
+    }, 260);
+  }
+
+  setScene(false);
+  document.getElementById('again').addEventListener('click', () => setScene(true));
+</script>
+
+</body>
+</html>
